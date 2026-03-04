@@ -18,7 +18,15 @@ WORKDIR /app
 COPY --from=build /app .
 RUN chmod +x ArchipelagoSphereTracker
 
-# Usa shell env command para escribir la variable garantizando la evaluación
-ENTRYPOINT ["/bin/sh", "-c", "printenv DISCORD_TOKEN | awk '{print \"DISCORD_TOKEN=\"$0}' > .env && ./ArchipelagoSphereTracker --NormalMode"]
+# Crear un script de arranque ultra-verboso (con logs)
+RUN echo '#!/bin/sh' > /app/start.sh && \
+    echo 'echo "--- DIAGNOSTIC START ---"' >> /app/start.sh && \
+    echo 'echo "Variable cruda de Railway: $DISCORD_TOKEN"' >> /app/start.sh && \
+    echo 'echo "DISCORD_TOKEN=$DISCORD_TOKEN" > .env' >> /app/start.sh && \
+    echo 'echo "--- .ENV CREATED. CONTENTS: ---"' >> /app/start.sh && \
+    echo 'cat .env' >> /app/start.sh && \
+    echo 'echo "--- STARTING BOT ---"' >> /app/start.sh && \
+    echo 'exec ./ArchipelagoSphereTracker --NormalMode' >> /app/start.sh && \
+    chmod +x /app/start.sh
 
-
+ENTRYPOINT ["/app/start.sh"]
