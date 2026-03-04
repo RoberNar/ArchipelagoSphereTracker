@@ -18,5 +18,6 @@ WORKDIR /app
 COPY --from=build /app .
 RUN chmod +x ArchipelagoSphereTracker
 
-# Generate strictly formatted .env file, removing any whitespace/newlines
-ENTRYPOINT ["/bin/sh", "-c", "printf 'DISCORD_TOKEN=%s' \"$(echo $DISCORD_TOKEN | tr -d ' ' | tr -d '\n' | tr -d '\r')\" > .env && ./ArchipelagoSphereTracker --NormalMode"]
+# Generate strictly formatted .env file without quotes
+ENTRYPOINT ["/bin/sh", "-c", "echo DISCORD_TOKEN=\"${DISCORD_TOKEN}\" | tr -d '\"' | tr -d '\r' > .env && ./ArchipelagoSphereTracker --NormalMode"]
+
