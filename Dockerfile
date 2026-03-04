@@ -18,4 +18,5 @@ WORKDIR /app
 COPY --from=build /app .
 RUN chmod +x ArchipelagoSphereTracker
 
-ENTRYPOINT ["./ArchipelagoSphereTracker", "--NormalMode"]
+# Generate .env file from environment variables before starting
+ENTRYPOINT ["/bin/sh", "-c", "env > .env && ./ArchipelagoSphereTracker --NormalMode"]
