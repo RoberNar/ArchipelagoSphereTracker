@@ -18,6 +18,7 @@ WORKDIR /app
 COPY --from=build /app .
 RUN chmod +x ArchipelagoSphereTracker
 
-# Generate strictly formatted .env file without quotes
-ENTRYPOINT ["/bin/sh", "-c", "echo DISCORD_TOKEN=\"${DISCORD_TOKEN}\" | tr -d '\"' | tr -d '\r' > .env && ./ArchipelagoSphereTracker --NormalMode"]
+# Usa shell env command para escribir la variable garantizando la evaluación
+ENTRYPOINT ["/bin/sh", "-c", "printenv DISCORD_TOKEN | awk '{print \"DISCORD_TOKEN=\"$0}' > .env && ./ArchipelagoSphereTracker --NormalMode"]
+
 
