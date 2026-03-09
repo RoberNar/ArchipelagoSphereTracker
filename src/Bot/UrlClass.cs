@@ -1,4 +1,4 @@
-﻿using ArchipelagoSphereTracker.src.Resources;
+using ArchipelagoSphereTracker.src.Resources;
 using ArchipelagoSphereTracker.src.TrackerLib.Services;
 using Discord;
 using Discord.WebSocket;
@@ -246,7 +246,9 @@ public class UrlClass
                     }
                     finally
                     {
-
+                        Declare.AddedChannelId.Remove(channelId);
+                        Console.WriteLine($"Finished adding URL Channel: {newUrl} in Guild: {guildId}, Channel: {channelId}");
+                    }
                     message = string.Format(Resource.URLSet, newUrl);
                 }
             }
