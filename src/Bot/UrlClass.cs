@@ -219,35 +219,37 @@ public class UrlClass
                         });
                     }
 
-                    if (!string.IsNullOrEmpty(tracker))
+                    Declare.AddedChannelId.Add(channelId);
+                    try
                     {
-                        Declare.AddedChannelId.Add(channelId);
-                        try
+                        await ChannelsAndUrlsCommands.AddOrEditUrlChannelAsync(guildId, channelId, baseUrl, room, tracker, silent, checkFrequencyStr, port);
+                        if (!string.IsNullOrEmpty(tracker))
                         {
-                            await ChannelsAndUrlsCommands.AddOrEditUrlChannelAsync(guildId, channelId, baseUrl, room, tracker, silent, checkFrequencyStr, port);
                             var rootTracker = await TrackerDatapackageFetcher.getRoots(baseUrl, tracker, TrackingDataManager.Http);
                             var checksums = TrackerDatapackageFetcher.GetDatapackageChecksums(rootTracker);
                             await TrackerDatapackageFetcher.SeedDatapackagesFromTrackerAsync(baseUrl, guildId, channelId, rootTracker);
-                            await ChannelsAndUrlsCommands.AddOrEditUrlChannelPathAsync(guildId, channelId, patchLinkList);
-                            await AliasChoicesCommands.AddOrReplaceAliasChoiceAsync(guildId, channelId, aliasList);
-                            await BotCommands.SendMessageAsync(Resource.TDMAliasUpdated, channelId);
-                            var info = await HelperClass.Info(channelId, guildId);
-                            await BotCommands.SendMessageAsync(info, channelId);
-                            using MemoryStream playersStream = await SendPlayersInfoAsync(channelId, thread, aliasList, roomInfo, room);
-                            await ChannelsAndUrlsCommands.SendAllPatchesFileForChannelAsync(guildId, channelId);
-                            await TrackingDataManager.GetTableDataAsync(guildId, channelId, baseUrl, tracker, silent, true);
-                            await ChannelsAndUrlsCommands.UpdateLastCheckAsync(guildId, channelId);
+                        }
+                        await ChannelsAndUrlsCommands.AddOrEditUrlChannelPathAsync(guildId, channelId, patchLinkList);
+                        await AliasChoicesCommands.AddOrReplaceAliasChoiceAsync(guildId, channelId, aliasList);
+                        await BotCommands.SendMessageAsync(Resource.TDMAliasUpdated, channelId);
+                        var info = await HelperClass.Info(channelId, guildId);
+                        await BotCommands.SendMessageAsync(info, channelId);
+                        using MemoryStream playersStream = await SendPlayersInfoAsync(channelId, thread, aliasList, roomInfo, room);
+                        await ChannelsAndUrlsCommands.SendAllPatchesFileForChannelAsync(guildId, channelId);
+                        await TrackingDataManager.GetTableDataAsync(guildId, channelId, baseUrl, tracker, silent, true);
+                        await ChannelsAndUrlsCommands.UpdateLastCheckAsync(guildId, channelId);
 
-                            await BotCommands.SendMessageAsync(Resource.Discord, channelId);
-                            await BotCommands.SendMessageAsync(Resource.URLBotReady, channelId);
-                            await BotCommands.SendMessageAsync(Resource.ASTRoomCommand, channelId);
-                            await BotCommands.SendMessageAsync(Resource.ASTUserCommand, channelId);
-                        }
-                        finally
-                        {
-                            Declare.AddedChannelId.Remove(channelId);
-                            Console.WriteLine($"Finished adding URL Channel: {newUrl} in Guild: {guildId}, Channel: {channelId}");
-                        }
+                        await BotCommands.SendMessageAsync(Resource.Discord, channelId);
+                        await BotCommands.SendMessageAsync(Resource.URLBotReady, channelId);
+                        await BotCommands.SendMessageAsync(Resource.ASTRoomCommand, channelId);
+                        await BotCommands.SendMessageAsync(Resource.ASTUserCommand, channelId);
+                    }
+                    finally
+                    {
+                        Declare.AddedChannelId.Remove(channelId);
+                        Console.WriteLine($"Finished adding URL Channel: {newUrl} in Guild: {guildId}, Channel: {channelId}");
+                    }
+
                     }
                     message = string.Format(Resource.URLSet, newUrl);
                 }
