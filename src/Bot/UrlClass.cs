@@ -250,6 +250,10 @@ public class UrlClass
                         Console.WriteLine($"Finished adding URL Channel: {newUrl} in Guild: {guildId}, Channel: {channelId}");
                     }
 
+                        Declare.AddedChannelId.Remove(channelId);
+                        Console.WriteLine($"Finished adding URL Channel: {newUrl} in Guild: {guildId}, Channel: {channelId}");
+                    }
+
                     }
                     message = string.Format(Resource.URLSet, newUrl);
                 }
